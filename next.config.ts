@@ -5,6 +5,10 @@ const GANTRY_UAT = "https://uat.gantrypay.com";
 const GANTRY_SRC =
   "https://uat.gantrypay.com https://*.gantrypay.com wss://uat.gantrypay.com wss://*.gantrypay.com";
 
+/** Vercel Preview injects `_next-live` feedback from vercel.live; baseline script-src blocks it otherwise. */
+const VERCEL_PREVIEW_SCRIPT_SRC =
+  process.env.VERCEL_ENV === "preview" ? " https://vercel.live" : "";
+
 /**
  * Baseline CSP so Gantry modal script + checkout iframe load from UAT.
  * If Vercel (or another layer) also sends CSP, policies combine (stricter wins) — align both.
@@ -12,7 +16,7 @@ const GANTRY_SRC =
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${GANTRY_SRC}`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${GANTRY_SRC}${VERCEL_PREVIEW_SCRIPT_SRC}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",

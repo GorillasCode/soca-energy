@@ -7,7 +7,12 @@
  * Modal-only: data-modal-width, data-modal-max-height, data-iframe-height, data-modal-title
  * Multiple concurrent checkouts: enable on RTP Embeds config when needed.
  *
- * Blank iframe: DevTools → Network (gantrypay), Console (CSP). RTP: allowlist site origin.
+ * Blank modal / framing errors: DevTools → Network → select the iframe document request to
+ * uat.gantrypay.com. Confirm the final URL is `/embed/{id}` (not `/`); root often sends
+ * X-Frame-Options: sameorigin and will not render on your domain. Check Response headers
+ * (X-Frame-Options, CSP frame-ancestors). In RTP/Gantry, allowlist this site’s origin as
+ * the merchant URL if required. `chrome-error://chromewebdata` in the console usually
+ * follows a blocked iframe, not a separate app bug. Console CSP lines: see next.config.ts.
  */
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ClipboardCheck, Droplets, ShieldCheck } from "lucide-react"
