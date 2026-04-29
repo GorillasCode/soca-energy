@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ClipboardCheck, Droplets, ShieldCheck } from "lucide-react"
 import type { ReactNode } from "react"
 
-const GANTRY_EMBED_ID = "69f249fb578f6aa6d23fe5af"
+const GANTRY_EMBED_ID = "69f24d84578f6aa6d23fe5e9"
 const GANTRY_CHECKOUT_ORIGIN = "https://uat.gantrypay.com"
 
 function formatSubscriptionPrice(amount: string): string {
