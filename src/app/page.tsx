@@ -1,5 +1,3 @@
-import Script from "next/script"
-
 import { AboutSection } from "@/components/ui/about-section"
 import { AdvantageSection } from "@/components/ui/advantage-section"
 import { AeroHero } from "@/components/ui/aero-hero"
@@ -14,10 +12,6 @@ import { SiteHeader } from "@/components/ui/site-header"
 export default function Home() {
   return (
     <>
-      <Script
-        src="https://uat.gantrypay.com/gantry-embed-modal.js"
-        strategy="lazyOnload"
-      />
       <SiteHeader />
       <main className="flex flex-1 flex-col">
         <AeroHero />

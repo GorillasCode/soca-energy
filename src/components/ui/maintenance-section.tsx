@@ -1,18 +1,29 @@
+/**
+ * Gantry modal embed: buttons need `gantry-pay-button` + `data-embed-id` and the
+ * bundle below (init on document). CSP (e.g. Vercel) must allow
+ * `script-src` and `frame-src` for `https://uat.gantrypay.com`.
+ *
+ * `data-price`: values &lt; 100 are treated as whole USD; ≥ 100 as cents.
+ * We pass cents for every plan (9900 → $99) so Standard/Premium are correct.
+ */
+import Script from "next/script"
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ClipboardCheck, Droplets, ShieldCheck } from "lucide-react"
 import type { ReactNode } from "react"
 
-const GANTRY_EMBED_ID = "69f24d84578f6aa6d23fe5e9"
+const GANTRY_EMBED_ID = "69f24eac578f6aa6d23fe631"
 const GANTRY_CHECKOUT_ORIGIN = "https://uat.gantrypay.com"
+const GANTRY_MODAL_SCRIPT_SRC =
+  "https://uat.gantrypay.com/gantry-embed-modal.js"
 
-function formatSubscriptionPrice(amount: string): string {
-  const n = Number(amount)
-  if (Number.isNaN(n)) return amount
+function formatUsdFromCents(cents: number): string {
+  if (!Number.isFinite(cents)) return String(cents)
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
-  }).format(n)
+  }).format(cents / 100)
 }
 
 const gantryButtonClassName =
@@ -23,7 +34,7 @@ const plans = [
     label: "Basic",
     description:
       "Essential cleaning and inspection cadence to keep production predictable.",
-    price: "99",
+    priceCents: 9_900,
     billingNote: "per month",
     modalTitle: "Basic maintenance — pay with card",
     icon: Droplets,
@@ -32,7 +43,7 @@ const plans = [
     label: "Standard",
     description:
       "Expanded coverage for typical residential PV and thermal systems.",
-    price: "199",
+    priceCents: 19_900,
     billingNote: "per month",
     modalTitle: "Standard maintenance — pay with card",
     icon: ClipboardCheck,
@@ -41,7 +52,7 @@ const plans = [
     label: "Premium",
     description:
       "Priority scheduling and comprehensive checks for peak performance.",
-    price: "299",
+    priceCents: 29_900,
     billingNote: "per month",
     modalTitle: "Premium maintenance — pay with card",
     icon: ShieldCheck,
@@ -50,6 +61,11 @@ const plans = [
 
 export function MaintenanceSection() {
   return (
+    <>
+      <Script
+        src={GANTRY_MODAL_SCRIPT_SRC}
+        strategy="afterInteractive"
+      />
     <section
       id="maintenance"
       className="border-t border-emerald-200/90 bg-white py-16 dark:border-emerald-200/80 dark:bg-white md:py-32"
@@ -89,7 +105,7 @@ export function MaintenanceSection() {
                     {plan.label}
                   </h3>
                   <p className="mt-3 font-kanturmuy text-3xl font-normal tracking-tight text-emerald-950">
-                    {formatSubscriptionPrice(plan.price)}
+                    {formatUsdFromCents(plan.priceCents)}
                   </p>
                   <p className="mt-1 text-xs font-medium text-neutral-600">
                     {plan.billingNote}
@@ -104,7 +120,7 @@ export function MaintenanceSection() {
                     className={gantryButtonClassName}
                     data-embed-id={GANTRY_EMBED_ID}
                     data-checkout-origin={GANTRY_CHECKOUT_ORIGIN}
-                    data-price={plan.price}
+                    data-price={String(plan.priceCents)}
                     data-modal-title={plan.modalTitle}
                     data-iframe-height="520"
                   >
@@ -117,6 +133,7 @@ export function MaintenanceSection() {
         </div>
       </div>
     </section>
+    </>
   )
 }
 
