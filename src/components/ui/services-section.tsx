@@ -26,12 +26,6 @@ const services: { title: string; paragraphs: string[] }[] = [
       "All systems are also installed with purge valves that allow the system to drain during the night to prevent freezing.",
     ],
   },
-  {
-    title: "Maintenance",
-    paragraphs: [
-      "SCEA provides manufacturer's warranty and workmanship warranties for the systems we build. In addition to the warranty, we provide a maintenance contract for cleaning and inspection of the systems. Routine cleaning and inspections will result in a system performing at its optimal level for a longer duration.",
-    ],
-  },
 ]
 
 export function ServicesSection() {
