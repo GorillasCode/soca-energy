@@ -5,9 +5,12 @@ const GANTRY_UAT = "https://uat.gantrypay.com";
 const GANTRY_SRC =
   "https://uat.gantrypay.com https://*.gantrypay.com wss://uat.gantrypay.com wss://*.gantrypay.com";
 
-/** Vercel Preview injects `_next-live` feedback from vercel.live; baseline script-src blocks it otherwise. */
-const VERCEL_PREVIEW_SCRIPT_SRC =
-  process.env.VERCEL_ENV === "preview" ? " https://vercel.live" : "";
+/**
+ * Vercel injects Live / feedback from `vercel.live`. Prefer `VERCEL === "1"` over
+ * `VERCEL_ENV === "preview"` — `next.config` is often evaluated without the latter,
+ * which produced deployments whose CSP still blocked `vercel.live`.
+ */
+const VERCEL_LIVE_SRC = process.env.VERCEL === "1" ? " https://vercel.live" : "";
 
 /**
  * Baseline CSP so Gantry modal script + checkout iframe load from UAT.
@@ -16,12 +19,12 @@ const VERCEL_PREVIEW_SCRIPT_SRC =
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${GANTRY_SRC}${VERCEL_PREVIEW_SCRIPT_SRC}`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${GANTRY_SRC}${VERCEL_LIVE_SRC}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  `connect-src 'self' ${GANTRY_SRC}`,
-  `frame-src 'self' ${GANTRY_SRC}`,
+  `connect-src 'self' ${GANTRY_SRC}${VERCEL_LIVE_SRC}`,
+  `frame-src 'self' ${GANTRY_SRC}${VERCEL_LIVE_SRC}`,
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
