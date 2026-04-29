@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Kantumruy_Pro } from "next/font/google";
 import Script from "next/script";
 
+import { EnvironmentBadge } from "@/components/ui/environment-badge";
 import "./globals.css";
 
 /** UAT Gantry modal bundle — same URL as HTML embed; `lazyOnload` ≈ `defer`. */
@@ -42,6 +43,7 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <Script src={GANTRY_EMBED_MODAL_SCRIPT} strategy="lazyOnload" />
+        <EnvironmentBadge />
         {children}
       </body>
     </html>

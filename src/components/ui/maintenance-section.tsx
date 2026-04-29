@@ -1,11 +1,11 @@
 /**
- * Gantry Pay — Pay button (modal). Paste the script once per page; add buttons anywhere.
- * If your site uses CSP, allow script-src and frame-src: https://uat.gantrypay.com
+ * Gantry Pay — Pay button (modal). Load `gantry-embed-modal.js` once (see root layout).
+ * CSP: allow script-src + frame-src for https://uat.gantrypay.com (see next.config.ts).
+ * Vercel: if another layer sets CSP, align with the merchant site, e.g. frame-src/script-src/connect-src for uat.gantrypay.com.
  * Optional on <button>: data-amount|data-price, data-primary-color|data-color, data-policy-id,
  * data-reference-number, data-theme-id, data-logo, data-preview
- * Modal-only: data-modal-width, data-modal-max-height, data-iframe-height (e.g. 520 or 520px), data-modal-title
- * For multiple concurrent checkouts with the same embed (e.g. variable amount), enable
- * "Multiple concurrent checkouts" on RTP Embeds config.
+ * Modal-only: data-modal-width, data-modal-max-height, data-iframe-height, data-modal-title
+ * Multiple concurrent checkouts: enable on RTP Embeds config when needed.
  *
  * Blank iframe: DevTools → Network (gantrypay), Console (CSP). RTP: allowlist site origin.
  */
@@ -14,7 +14,14 @@ import { ClipboardCheck, Droplets, ShieldCheck } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 const GANTRY_ORIGIN = "https://uat.gantrypay.com"
-const GANTRY_EMBED_ID = "69f26441170331266a27757d"
+/** Production build (`next build` / deployed). */
+const GANTRY_EMBED_ID_PRODUCTION = "69f27e7d780d715164b753d0"
+/** Local `next dev` — separate RTP embed for testing. */
+const GANTRY_EMBED_ID_DEVELOPMENT = "69f2782a780d715164b75373"
+const GANTRY_EMBED_ID =
+  process.env.NODE_ENV === "production"
+    ? GANTRY_EMBED_ID_PRODUCTION
+    : GANTRY_EMBED_ID_DEVELOPMENT
 
 function usd(cents: number) {
   return new Intl.NumberFormat("en-US", {
