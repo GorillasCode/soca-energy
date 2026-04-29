@@ -1,14 +1,13 @@
-// Gantry Pay (modal): load script once per page. CSP: allow script-src + frame-src
-// https://uat.gantrypay.com. Variable data-price → "Multiple concurrent checkouts" on RTP.
-import Script from "next/script"
-
+// Gantry Pay (modal). Blank iframe: DevTools → Network (filter "gantrypay") check iframe doc status;
+// Console for CSP/frame errors. RTP: allowlist exact browser origin (e.g. Vercel URL + localhost),
+// embed id + UAT origin match data-* below, enable "Multiple concurrent checkouts" for variable data-price.
+// Site CSP (if any): script-src + frame-src https://uat.gantrypay.com
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ClipboardCheck, Droplets, ShieldCheck } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 const GANTRY_ORIGIN = "https://uat.gantrypay.com"
-const GANTRY_SCRIPT = `${GANTRY_ORIGIN}/gantry-embed-modal.js`
-const GANTRY_EMBED_ID = "69f24d84578f6aa6d23fe5e9"
+const GANTRY_EMBED_ID = "69f258f1578f6aa6d23fe68f"
 
 function usd(cents: number) {
   return new Intl.NumberFormat("en-US", {
@@ -60,77 +59,75 @@ const payButtonClass =
 
 export function MaintenanceSection() {
   return (
-    <>
-      <Script src={GANTRY_SCRIPT} strategy="lazyOnload" />
-      <section
-        id="maintenance"
-        className="border-t border-emerald-200/90 bg-white py-16 dark:border-emerald-200/80 dark:bg-white md:py-32"
-        aria-labelledby="maintenance-heading"
-      >
-        <div className="@container mx-auto max-w-5xl px-6">
-          <header className="text-center">
-            <h2
-              id="maintenance-heading"
-              className="text-balance font-kanturmuy text-4xl font-normal tracking-tight text-emerald-950 lg:text-5xl"
-            >
-              Maintenance &amp; care
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-pretty text-base leading-relaxed text-neutral-800">
-              SCEA provides manufacturer&apos;s and workmanship warranties on the
-              systems we build. Our maintenance contracts cover cleaning and
-              inspection so your array stays efficient longer.
-            </p>
-            <p className="mt-2 text-sm text-neutral-600">
-              Choose a plan — secure card checkout opens in a modal.
-            </p>
-          </header>
+    <section
+      id="maintenance"
+      className="border-t border-emerald-200/90 bg-white py-16 dark:border-emerald-200/80 dark:bg-white md:py-32"
+      aria-labelledby="maintenance-heading"
+    >
+      <div className="@container mx-auto max-w-5xl px-6">
+        <header className="text-center">
+          <h2
+            id="maintenance-heading"
+            className="text-balance font-kanturmuy text-4xl font-normal tracking-tight text-emerald-950 lg:text-5xl"
+          >
+            Maintenance &amp; care
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-pretty text-base leading-relaxed text-neutral-800">
+            SCEA provides manufacturer&apos;s and workmanship warranties on the
+            systems we build. Our maintenance contracts cover cleaning and
+            inspection so your array stays efficient longer.
+          </p>
+          <p className="mt-2 text-sm text-neutral-600">
+            Choose a plan — secure card checkout opens in a modal.
+          </p>
+        </header>
 
-          <ul className="@min-4xl:grid-cols-3 mx-auto mt-8 grid max-w-sm list-none gap-6 *:text-center md:mt-16 md:max-w-none">
-            {plans.map((plan) => {
-              const Icon = plan.icon
-              return (
-                <li key={plan.label}>
-                  <Card className="flex h-full flex-col border border-emerald-100 bg-white shadow-sm dark:border-emerald-200/90 dark:bg-white">
-                    <CardHeader className="pb-3">
-                      <div
-                        className="mx-auto flex size-12 items-center justify-center rounded-lg border border-emerald-200/90 bg-white"
-                        aria-hidden
-                      >
-                        <Icon className="size-6 text-emerald-800" />
-                      </div>
-                      <h3 className="mt-6 font-semibold text-emerald-950">
-                        {plan.label}
-                      </h3>
-                      <p className="mt-3 font-kanturmuy text-3xl font-normal tracking-tight text-emerald-950">
-                        {usd(plan.priceCents)}
-                      </p>
-                      <p className="mt-1 text-xs font-medium text-neutral-600">
-                        {plan.billingNote}
-                      </p>
-                    </CardHeader>
-                    <CardContent className="flex flex-1 flex-col pt-0">
-                      <p className="grow text-sm leading-relaxed text-neutral-700">
-                        {plan.description}
-                      </p>
-                      <button
-                        type="button"
-                        className={payButtonClass}
-                        data-embed-id={GANTRY_EMBED_ID}
-                        data-checkout-origin={GANTRY_ORIGIN}
-                        data-price={String(plan.priceCents)}
-                        data-modal-title={plan.modalTitle}
-                        data-iframe-height="520"
-                      >
-                        Pay with card
-                      </button>
-                    </CardContent>
-                  </Card>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </section>
-    </>
+        <ul className="@min-4xl:grid-cols-3 mx-auto mt-8 grid max-w-sm list-none gap-6 *:text-center md:mt-16 md:max-w-none">
+          {plans.map((plan) => {
+            const Icon = plan.icon
+            return (
+              <li key={plan.label}>
+                <Card className="flex h-full flex-col border border-emerald-100 bg-white shadow-sm dark:border-emerald-200/90 dark:bg-white">
+                  <CardHeader className="pb-3">
+                    <div
+                      className="mx-auto flex size-12 items-center justify-center rounded-lg border border-emerald-200/90 bg-white"
+                      aria-hidden
+                    >
+                      <Icon className="size-6 text-emerald-800" />
+                    </div>
+                    <h3 className="mt-6 font-semibold text-emerald-950">
+                      {plan.label}
+                    </h3>
+                    <p className="mt-3 font-kanturmuy text-3xl font-normal tracking-tight text-emerald-950">
+                      {usd(plan.priceCents)}
+                    </p>
+                    <p className="mt-1 text-xs font-medium text-neutral-600">
+                      {plan.billingNote}
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col pt-0">
+                    <p className="grow text-sm leading-relaxed text-neutral-700">
+                      {plan.description}
+                    </p>
+                    <button
+                      type="button"
+                      className={payButtonClass}
+                      data-embed-id={GANTRY_EMBED_ID}
+                      data-checkout-origin={GANTRY_ORIGIN}
+                      data-price={String(plan.priceCents)}
+                      data-modal-title={plan.modalTitle}
+                      data-iframe-height="520"
+                      data-modal-max-height="720"
+                    >
+                      Pay with card
+                    </button>
+                  </CardContent>
+                </Card>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    </section>
   )
 }

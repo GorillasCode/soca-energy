@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Kantumruy_Pro } from "next/font/google";
+import Script from "next/script";
+
 import "./globals.css";
+
+const GANTRY_EMBED_MODAL_SCRIPT =
+  "https://uat.gantrypay.com/gantry-embed-modal.js";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +40,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${kanturmuy.variable} dark h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        <Script
+          src={GANTRY_EMBED_MODAL_SCRIPT}
+          strategy="afterInteractive"
+        />
         {children}
       </body>
     </html>
