@@ -7,7 +7,7 @@ import { ClipboardCheck, Droplets, ShieldCheck } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 const GANTRY_ORIGIN = "https://uat.gantrypay.com"
-const GANTRY_EMBED_ID = "69f258f1578f6aa6d23fe68f"
+const GANTRY_EMBED_ID = "69f26441170331266a27757d"
 
 function usd(cents: number) {
   return new Intl.NumberFormat("en-US", {
