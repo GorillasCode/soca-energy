@@ -1,7 +1,14 @@
-// Gantry Pay (modal). Blank iframe: DevTools → Network (filter "gantrypay") check iframe doc status;
-// Console for CSP/frame errors. RTP: allowlist exact browser origin (e.g. Vercel URL + localhost),
-// embed id + UAT origin match data-* below, enable "Multiple concurrent checkouts" for variable data-price.
-// Site CSP (if any): script-src + frame-src https://uat.gantrypay.com
+/**
+ * Gantry Pay — Pay button (modal). Paste the script once per page; add buttons anywhere.
+ * If your site uses CSP, allow script-src and frame-src: https://uat.gantrypay.com
+ * Optional on <button>: data-amount|data-price, data-primary-color|data-color, data-policy-id,
+ * data-reference-number, data-theme-id, data-logo, data-preview
+ * Modal-only: data-modal-width, data-modal-max-height, data-iframe-height (e.g. 520 or 520px), data-modal-title
+ * For multiple concurrent checkouts with the same embed (e.g. variable amount), enable
+ * "Multiple concurrent checkouts" on RTP Embeds config.
+ *
+ * Blank iframe: DevTools → Network (gantrypay), Console (CSP). RTP: allowlist site origin.
+ */
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ClipboardCheck, Droplets, ShieldCheck } from "lucide-react"
 import type { LucideIcon } from "lucide-react"

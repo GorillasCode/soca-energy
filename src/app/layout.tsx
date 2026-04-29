@@ -4,8 +4,9 @@ import Script from "next/script";
 
 import "./globals.css";
 
-const GANTRY_EMBED_MODAL_SCRIPT =
-  "https://uat.gantrypay.com/gantry-embed-modal.js";
+/** UAT Gantry modal bundle — same URL as HTML embed; `lazyOnload` ≈ `defer`. */
+const GANTRY_UAT_ORIGIN = "https://uat.gantrypay.com";
+const GANTRY_EMBED_MODAL_SCRIPT = `${GANTRY_UAT_ORIGIN}/gantry-embed-modal.js`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,10 +41,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${kanturmuy.variable} dark h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <Script
-          src={GANTRY_EMBED_MODAL_SCRIPT}
-          strategy="afterInteractive"
-        />
+        <Script src={GANTRY_EMBED_MODAL_SCRIPT} strategy="lazyOnload" />
         {children}
       </body>
     </html>
