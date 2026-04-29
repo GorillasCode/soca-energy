@@ -3,11 +3,11 @@ import { Geist, Geist_Mono, Kantumruy_Pro } from "next/font/google";
 import Script from "next/script";
 
 import { EnvironmentBadge } from "@/components/ui/environment-badge";
+import { GANTRY_ORIGIN } from "@/lib/gantry";
 import "./globals.css";
 
-/** UAT Gantry modal bundle — same URL as HTML embed; `lazyOnload` ≈ `defer`. */
-const GANTRY_UAT_ORIGIN = "https://uat.gantrypay.com";
-const GANTRY_EMBED_MODAL_SCRIPT = `${GANTRY_UAT_ORIGIN}/gantry-embed-modal.js`;
+/** Gantry modal bundle — same host as checkout; `lazyOnload` ≈ `defer`. */
+const GANTRY_EMBED_MODAL_SCRIPT = `${GANTRY_ORIGIN}/gantry-embed-modal.js`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

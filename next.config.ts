@@ -1,9 +1,17 @@
 import type { NextConfig } from "next";
 
-const GANTRY_UAT = "https://uat.gantrypay.com";
-/** UAT + subdomains + WebSockets (checkout sometimes uses wss / API hosts). */
-const GANTRY_SRC =
-  "https://uat.gantrypay.com https://*.gantrypay.com wss://uat.gantrypay.com wss://*.gantrypay.com";
+const GANTRY_ORIGIN_DEFAULT = "https://uat.gantrypay.com";
+/** Align with `NEXT_PUBLIC_GANTRY_ORIGIN` in app code; strip trailing `/`. */
+const gantryOrigin = (
+  process.env.GANTRY_ORIGIN ??
+  process.env.NEXT_PUBLIC_GANTRY_ORIGIN ??
+  GANTRY_ORIGIN_DEFAULT
+).replace(/\/$/, "");
+
+const GANTRY_UAT = gantryOrigin;
+const gantryHost = gantryOrigin.replace(/^https:\/\//, "");
+/** Primary host + gantrypay.com wildcards + matching wss (checkout / APIs). */
+const GANTRY_SRC = `${gantryOrigin} https://*.gantrypay.com wss://${gantryHost} wss://*.gantrypay.com`;
 
 /**
  * Vercel injects Live / feedback from `vercel.live`. Prefer `VERCEL === "1"` over
@@ -13,9 +21,20 @@ const GANTRY_SRC =
 const VERCEL_LIVE_SRC = process.env.VERCEL === "1" ? " https://vercel.live" : "";
 
 /**
+ * Who may embed this app in an iframe (`frame-ancestors`). Always includes `'self'`.
+ * Set `FRAME_ANCESTOR_ORIGINS` to space-separated HTTPS origins (e.g. `https://meusite.com`).
+ */
+function buildFrameAncestors(): string {
+  const raw = process.env.FRAME_ANCESTOR_ORIGINS?.trim();
+  if (!raw) return "'self'";
+  const origins = raw.split(/\s+/).filter(Boolean);
+  return ["'self'", ...origins].join(" ");
+}
+
+/**
  * Baseline CSP so Gantry modal script + checkout iframe load from UAT.
  * If Vercel (or another layer) also sends CSP, policies combine (stricter wins) — align both.
- * @see https://uat.gantrypay.com embed docs (script-src + frame-src for Gantry host)
+ * @see Gantry embed docs (script-src + frame-src for your Gantry host, default UAT)
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -29,6 +48,7 @@ const contentSecurityPolicy = [
   "object-src 'none'",
   "base-uri 'self'",
   `form-action 'self' ${GANTRY_UAT} https://*.gantrypay.com`,
+  `frame-ancestors ${buildFrameAncestors()}`,
 ].join("; ");
 
 const nextConfig: NextConfig = {
@@ -44,7 +64,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/:path*",
+        source: "/(.*)",
         headers: [
           {
             key: "Content-Security-Policy",

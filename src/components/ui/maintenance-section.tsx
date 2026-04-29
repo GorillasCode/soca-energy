@@ -1,24 +1,23 @@
 /**
  * Gantry Pay — Pay button (modal). Load `gantry-embed-modal.js` once (see root layout).
- * CSP: allow script-src + frame-src for https://uat.gantrypay.com (see next.config.ts).
- * Vercel: if another layer sets CSP, align with the merchant site, e.g. frame-src/script-src/connect-src for uat.gantrypay.com.
+ * CSP: allow script-src + frame-src for the Gantry host (see next.config.ts, env below).
+ * Vercel: if another layer sets CSP, align with the merchant site for that same host.
  * Optional on <button>: data-amount|data-price, data-primary-color|data-color, data-policy-id,
  * data-reference-number, data-theme-id, data-logo, data-preview
  * Modal-only: data-modal-width, data-modal-max-height, data-iframe-height, data-modal-title
  * Multiple concurrent checkouts: enable on RTP Embeds config when needed.
  *
  * Blank modal / framing errors: DevTools → Network → select the iframe document request to
- * uat.gantrypay.com. Confirm the final URL is `/embed/{id}` (not `/`); root often sends
+ * the Gantry host. Confirm the final URL is `/embed/{id}` (not `/`); root often sends
  * X-Frame-Options: sameorigin and will not render on your domain. Check Response headers
  * (X-Frame-Options, CSP frame-ancestors). In RTP/Gantry, allowlist this site’s origin as
  * the merchant URL if required. `chrome-error://chromewebdata` in the console usually
  * follows a blocked iframe, not a separate app bug. Console CSP lines: see next.config.ts.
  */
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { GANTRY_ORIGIN } from "@/lib/gantry"
 import { ClipboardCheck, Droplets, ShieldCheck } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
-
-const GANTRY_ORIGIN = "https://uat.gantrypay.com"
 /** Production build (`next build` / deployed). */
 const GANTRY_EMBED_ID_PRODUCTION = "69f27e7d780d715164b753d0"
 /** Local `next dev` — separate RTP embed for testing. */
