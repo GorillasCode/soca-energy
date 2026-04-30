@@ -1,27 +1,35 @@
 /**
- * Gantry Pay — Pay button (modal). Load `gantry-embed-modal.js` once (see root layout).
- * CSP: allow script-src + frame-src for the Gantry host (see next.config.ts, env below).
- * Vercel: if another layer sets CSP, align with the merchant site for that same host.
- * Optional on <button>: data-amount|data-price, data-primary-color|data-color, data-policy-id,
- * data-reference-number, data-theme-id, data-logo, data-preview
- * Modal-only: data-modal-width, data-modal-max-height, data-iframe-height, data-modal-title
- * Multiple concurrent checkouts: enable on RTP Embeds config when needed.
+ * Gantry Pay — Pay button (modal). Paste the script once per page; here it loads in root
+ * `src/app/layout.tsx` loads `gantry-embed-modal.js` once (same as HTML `<script defer>`).
  *
- * Blank modal / framing errors: DevTools → Network → select the iframe document request to
- * the Gantry host. Confirm the final URL is `/embed/{id}` (not `/`); root often sends
- * X-Frame-Options: sameorigin and will not render on your domain. Check Response headers
- * (X-Frame-Options, CSP frame-ancestors). In RTP/Gantry, allowlist this site’s origin as
- * the merchant URL if required. `chrome-error://chromewebdata` in the console usually
- * follows a blocked iframe, not a separate app bug. Console CSP lines: see next.config.ts.
+ * If your site uses CSP, allow `script-src` and `frame-src` for the Gantry host: in
+ * `next dev` default is `http://localhost:5173` (local RTP); production default is UAT
+ * `https://uat.gantrypay.com`. Override with `NEXT_PUBLIC_GANTRY_ORIGIN`. CSP: `next.config.ts`.
+ *
+ * Vercel (`vercel.json`): headers on your **merchant** site so the parent may load script +
+ * iframe, e.g.
+ *   {"source":"/(.*)","headers":[{"key":"Content-Security-Policy","value":"frame-src https://uat.gantrypay.com https:; script-src 'self' 'unsafe-inline' https://uat.gantrypay.com; connect-src 'self' https://uat.gantrypay.com https:"}]}
+ * Adjust `connect-src` if your API host differs; tighten `https:` once confirmed.
+ *
+ * Optional on `<button>`: data-amount|data-price, data-primary-color|data-color, data-policy-id,
+ * data-reference-number, data-theme-id, data-logo, data-preview
+ * Modal-only: data-modal-width, data-modal-max-height, data-iframe-height (e.g. 520 or 520px),
+ * data-modal-title
+ * For multiple concurrent checkouts with the same embed (e.g. variable amount), enable
+ * “Multiple concurrent checkouts” on RTP Embeds config.
+ *
+ * Dev embed id / origin: local snippet on `:5173`. Prod embed id from Gantry production
+ * snippet; prod script/checkout stay `https://uat.gantrypay.com` (not localhost). Blank iframe: Network tab
+ * on the Gantry host — final URL should be `/embed/{id}` not `/`; see `next.config.ts` for CSP.
  */
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { GANTRY_ORIGIN } from "@/lib/gantry"
 import { ClipboardCheck, Droplets, ShieldCheck } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
-/** Production build (`next build` / deployed). */
-const GANTRY_EMBED_ID_PRODUCTION = "69f27e7d780d715164b753d0"
-/** Local `next dev` — separate RTP embed for testing. */
-const GANTRY_EMBED_ID_DEVELOPMENT = "69f2782a780d715164b75373"
+/** Production build (`next build` / deployed) — Gantry `data-embed-id` for prod RTP. */
+const GANTRY_EMBED_ID_PRODUCTION = "69f2b1a355691f834ad3ec08"
+/** Local `next dev` — RTP embed when checkout/script run on `http://localhost:5173`. */
+const GANTRY_EMBED_ID_DEVELOPMENT = "69f29aec55691f834ad3ebc7"
 const GANTRY_EMBED_ID =
   process.env.NODE_ENV === "production"
     ? GANTRY_EMBED_ID_PRODUCTION

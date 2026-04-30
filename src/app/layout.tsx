@@ -6,7 +6,7 @@ import { EnvironmentBadge } from "@/components/ui/environment-badge";
 import { GANTRY_ORIGIN } from "@/lib/gantry";
 import "./globals.css";
 
-/** Gantry modal bundle — same host as checkout; `lazyOnload` ≈ `defer`. */
+/** Gantry: one script per page — dev `http://localhost:5173/...` or UAT; `lazyOnload` ≈ `defer`. */
 const GANTRY_EMBED_MODAL_SCRIPT = `${GANTRY_ORIGIN}/gantry-embed-modal.js`;
 
 const geistSans = Geist({
