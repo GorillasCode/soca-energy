@@ -17,8 +17,15 @@ const gantryHost = gantryOrigin.replace(/^https?:\/\//, "");
 const gantryWs = gantryOrigin.startsWith("http://")
   ? `ws://${gantryHost}`
   : `wss://${gantryHost}`;
-/** Primary host + gantrypay.com wildcards + checkout WebSocket host. */
-const GANTRY_SRC = `${gantryOrigin} https://*.gantrypay.com ${gantryWs} wss://*.gantrypay.com`;
+/**
+ * In `next dev`, script/checkout default to localhost but the iframe may still load UAT
+ * (embed config). List UAT explicitly so CSP is never the blocker for that hybrid.
+ */
+const GANTRY_REMOTE =
+  "https://uat.gantrypay.com https://*.gantrypay.com wss://uat.gantrypay.com wss://*.gantrypay.com";
+const GANTRY_SRC = isDev
+  ? `${gantryOrigin} ${gantryWs} ${GANTRY_REMOTE}`
+  : `${gantryOrigin} https://*.gantrypay.com ${gantryWs} wss://*.gantrypay.com`;
 
 /**
  * Vercel injects Live / feedback from `vercel.live`. Prefer `VERCEL === "1"` over
@@ -55,7 +62,7 @@ const contentSecurityPolicy = [
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
-  `form-action 'self' ${GANTRY_UAT} https://*.gantrypay.com`,
+  `form-action 'self' ${GANTRY_UAT} https://uat.gantrypay.com https://*.gantrypay.com`,
   `frame-ancestors ${buildFrameAncestors()}`,
 ].join("; ");
 
